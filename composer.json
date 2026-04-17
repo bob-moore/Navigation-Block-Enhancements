@@ -1,0 +1,29 @@
+{
+    "name": "bmd/navigation-block-enhancements",
+    "description": "Enhance the core navigation block for vertical dropdown support",
+    "type": "library",
+    "version": "0.1.0",
+    "license": "GPL-2.0-or-later",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "optimize-autoloader": true,
+        "vendor-dir": "vendor",
+        "platform": {
+            "php": "8.1"
+        },
+        "allow-plugins": {
+            "composer/installers": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Bmd\\": "./inc"
+        }
+    },
+    "require-dev": {
+    },
+    "scripts": {
+    }
+}

@@ -1,0 +1,36 @@
+{
+	"name": "navigation-block-enhancements",
+	"version": "0.1.0",
+	"description": "Adds rendering enhancements for the core Navigation block.",
+	"author": "Bob Moore",
+	"license": "GPL-2.0-or-later",
+	"private": true,
+	"engines": {
+		"node": ">=18.12.0",
+		"npm": ">=8.19.2"
+	},
+	"scripts": {
+		"build": "wp-scripts build --experimental-modules",
+		"format": "wp-scripts format",
+		"lint:css": "wp-scripts lint-style",
+		"lint:js": "wp-scripts lint-js",
+		"packages-update": "wp-scripts packages-update",
+		"plugin-zip": "wp-scripts plugin-zip",
+		"start": "wp-scripts start --experimental-modules"
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "^31.2.0",
+		"@wordpress/stylelint-config": "^23.29.0",
+		"mini-css-extract-plugin": "^2.9.4",
+		"stylelint": "^16.26.1",
+		"stylelint-scss": "^6.14.0",
+		"webpack-remove-empty-scripts": "^1.1.1"
+	},
+	"files": [ 
+		"navigation-block-enhancements.php",
+		"build",
+		"vendor",
+		"readme.txt",
+		"inc"
+	]
+}
