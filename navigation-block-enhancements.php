@@ -5,7 +5,7 @@
  * Author:            Bob Moore
  * Author URI:        https://www.bobmoore.dev
  * Description:       Adds rendering enhancements for the core Navigation block.
- * Version:           0.1.0
+ * Version:           0.1.1
  * Requires at least: 6.7
  * Tested up to:      6.7
  * Requires PHP:      8.2

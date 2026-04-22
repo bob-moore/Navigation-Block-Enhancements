@@ -62,11 +62,16 @@ use Bmd\NavBlockEnhancements;
 
 $enhancements = new NavBlockEnhancements();
 
-add_action( 'init', [ $enhancements, 'enqueueStyles' ] );
-add_filter( 'render_block_core/navigation', [ $enhancements, 'processNavigationBlock' ], 10, 2 );
+$enhancements->mount();
 ```
 
 ## Changelog
+
+### 0.2.0
+
+- Added `mount()` method to `NavBlockEnhancements` that registers all WordPress hooks in one call (`enqueue_block_assets` and `render_block_core/navigation`).
+- Simplified plugin bootstrap: replaced individual `add_action`/`add_filter` calls with `$plugin->mount()`.
+- When using the library via Composer, call `$enhancements->mount()` after instantiation instead of wiring hooks manually.
 
 ### 0.1.0
 
