@@ -29,6 +29,4 @@ require_once __DIR__ . '/vendor/autoload.php';
  * through Composer without automatically registering WordPress hooks.
  */
 $plugin = new NavBlockEnhancements();
-
-add_action( 'init', [ $plugin, 'enqueueStyles' ] );
-add_filter( 'render_block_core/navigation', [ $plugin, 'processNavigationBlock' ], 10, 2 );
+$plugin->mount();

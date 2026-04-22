@@ -18,6 +18,12 @@ namespace Bmd;
  */
 class NavBlockEnhancements
 {
+    public function mount(): void
+    {
+        add_action( 'enqueue_block_assets', [ $this, 'enqueueStyles' ] );
+        add_filter( 'render_block_core/navigation', [ $this, 'processNavigationBlock' ], 10, 2 );
+    }
+
     /**
      * Register the shared stylesheet for the core/navigation block.
      *
@@ -191,10 +197,6 @@ class NavBlockEnhancements
     public function removeFocusOutForModal( string $block_content, array $block ): string
     {
         $overlay_menu = $block['attrs']['overlayMenu'] ?? 'mobile';
-
-        // do_action( 'qm/debug', [
-        //     $block['attrs']['overlayMenu'],
-        // ] );
 
         if ( 'never' === $overlay_menu ) {
             return $block_content;
