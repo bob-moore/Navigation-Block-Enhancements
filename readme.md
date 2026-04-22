@@ -67,7 +67,7 @@ $enhancements->mount();
 
 ## Changelog
 
-### 0.2.0
+### 0.1.1
 
 - Added `mount()` method to `NavBlockEnhancements` that registers all WordPress hooks in one call (`enqueue_block_assets` and `render_block_core/navigation`).
 - Simplified plugin bootstrap: replaced individual `add_action`/`add_filter` calls with `$plugin->mount()`.
