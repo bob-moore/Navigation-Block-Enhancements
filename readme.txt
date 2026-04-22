@@ -3,7 +3,7 @@ Contributors: Bob Moore
 Tags: navigation, gutenberg, block editor, menus, accessibility
 Requires at least: 6.7
 Tested up to: 6.7
-Stable tag: 0.1.0
+Stable tag: 0.1.3
 Requires PHP: 8.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -60,6 +60,16 @@ WordPress 6.7+ and PHP 8.2+.
 
 == Changelog ==
 
+= 0.1.3 =
+
+* Bumped plugin and Composer package versions to 0.1.3.
+* Updated documentation to reflect current package usage and release metadata.
+
+= 0.1.1 =
+
+* Added `mount()` to register hooks in one call.
+* Updated plugin bootstrap flow to use the service mount method.
+
 = 0.1.0 =
 
 * Initial release.
@@ -67,6 +77,10 @@ WordPress 6.7+ and PHP 8.2+.
 * Added shared Navigation block stylesheet enqueue from build assets.
 
 == Upgrade Notice ==
+
+= 0.1.3 =
+
+Documentation and version metadata update.
 
 = 0.1.0 =
 

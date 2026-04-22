@@ -7,7 +7,7 @@ Navigation Block Enhancements is a WordPress plugin and Composer library that mo
 - Hooks into `render_block_core/navigation` and processes navigation markup with `WP_HTML_Tag_Processor`.
 - For vertical navigation output, removes `data-wp-on--focusout` handlers in the menu subtree.
 - Registers block-scoped styles for `core/navigation` from this package's `build/style-index.css`.
-- Resolves build file URLs from either `WP_CONTENT_DIR` or `ABSPATH`, which supports Composer usage in different project layouts.
+- Supports explicit plugin URI/path configuration via constructor arguments and setters.
 
 ## Requirements
 
@@ -66,6 +66,12 @@ $enhancements->mount();
 ```
 
 ## Changelog
+
+### 0.1.3
+
+- Bumped plugin and Composer package versions to `0.1.3`.
+- Updated package docs and release metadata for the current API.
+- Clarified explicit URI/path configuration for package asset loading.
 
 ### 0.1.1
 

@@ -17,7 +17,61 @@ namespace Bmd;
  * Service class for navigation block enhancements.
  */
 class NavBlockEnhancements
-{
+{	
+	/**
+	* URI of this plugin/package
+	*
+	* Used to enqueue block editor assets.
+	*
+	* @var string
+	*/
+	protected string $uri;
+	/**
+	* Path of the plugin/package
+	*
+	* Used to locate block editor assets.
+	*
+	* @var string
+	*/
+	protected string $path;
+	/**
+	* Initialize the plugin.
+	*
+	* Sets the URI and path for this package.
+	*
+	* @param string $uri URI to the plugin directory.
+	* @param string $path Absolute path to the plugin directory.
+	*/
+	public function __construct(
+		string $uri = '',
+		string $path = ''
+	) {
+		$this->setUri( ! empty( $uri ) ? $uri : plugin_dir_url( __DIR__ ) );
+		$this->setPath( ! empty( $path ) ? $path : plugin_dir_path( __DIR__ ) );
+	}
+	/**
+	* Setter for the URI property.
+	*
+	* @param string $uri string URI to set.
+	*
+	* @return void
+	*/
+	public function setUri( string $uri ): void
+	{
+		$this->uri = trailingslashit( $uri );
+	}
+
+	/**
+	* Setter for the path property.
+	*
+	* @param string $path string path to set.
+	*
+	* @return void
+	*/
+	public function setPath( string $path ): void
+	{
+		$this->path = trailingslashit( $path );
+	}
 	/**
 	 * Register all WordPress hooks for navigation block enhancements.
 	 *
@@ -41,14 +95,9 @@ class NavBlockEnhancements
 	{
 		$relative_path = 'style-index.css';
 		$style_file    = $this->buildPath( $relative_path );
+		$src           = $this->buildUrl( $relative_path );
 
-		if ( ! is_file( $style_file ) ) {
-			return;
-		}
-
-		$src = $this->buildUrl( $relative_path );
-
-		if ( empty( $src ) ) {
+		if ( empty( $style_file ) || empty( $src ) || ! is_file( $style_file ) ) {
 			return;
 		}
 
@@ -72,9 +121,11 @@ class NavBlockEnhancements
 	 */
 	protected function buildPath( string $relative_path ): string
 	{
-		return wp_normalize_path(
-			dirname( __DIR__ ) . '/build/' . ltrim( $relative_path, '/' )
-		);
+		if ( '' === $this->path ) {
+			return '';
+		}
+
+		return wp_normalize_path( $this->path . 'build/' . ltrim( $relative_path, '/' ) );
 	}
 
 	/**
@@ -86,36 +137,11 @@ class NavBlockEnhancements
 	 */
 	protected function buildUrl( string $relative_path ): string
 	{
-		$absolute_path = $this->buildPath( $relative_path );
-		$resolved_path = realpath( $absolute_path );
-
-		if ( false !== $resolved_path ) {
-			$absolute_path = wp_normalize_path( $resolved_path );
+		if ( '' === $this->uri ) {
+			return '';
 		}
 
-		$content_dir = wp_normalize_path( WP_CONTENT_DIR );
-
-		if ( str_starts_with( $absolute_path, $content_dir ) ) {
-			$relative = ltrim(
-				substr( $absolute_path, strlen( $content_dir ) ),
-				'/'
-			);
-
-			return content_url( $relative );
-		}
-
-		$root_dir = wp_normalize_path( ABSPATH );
-
-		if ( str_starts_with( $absolute_path, $root_dir ) ) {
-			$relative = ltrim(
-				substr( $absolute_path, strlen( $root_dir ) ),
-				'/'
-			);
-
-			return site_url( $relative );
-		}
-
-		return '';
+		return $this->uri . 'build/' . ltrim( $relative_path, '/' );
 	}
 
 	/**

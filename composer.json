@@ -2,7 +2,6 @@
     "name": "bmd/navigation-block-enhancements",
     "description": "Enhance the core navigation block for vertical dropdown support",
     "type": "library",
-    "version": "0.1.2",
     "author": "Bob Moore <bob@bobmoore.dev>",
     "homepage": "https://github.com/bob-moore/Navigation-Block-Enhancements",
     "license": "GPL-2.0-or-later",
