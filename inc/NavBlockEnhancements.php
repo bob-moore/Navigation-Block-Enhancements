@@ -25,7 +25,7 @@ class NavBlockEnhancements
 	 */
 	public function mount(): void
 	{
-		add_action( 'enqueue_block_assets', [ $this, 'enqueueStyles' ] );
+		add_action( 'after_setup_theme', [ $this, 'enqueueStyles' ] );
 		add_filter( 'render_block_core/navigation', [ $this, 'processNavigationBlock' ], 10, 2 );
 	}
 
