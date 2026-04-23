@@ -3,7 +3,7 @@ Contributors: Bob Moore
 Tags: navigation, gutenberg, block editor, menus, accessibility
 Requires at least: 6.7
 Tested up to: 6.7
-Stable tag: 0.1.4
+Stable tag: 0.2.0
 Requires PHP: 8.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -61,6 +61,11 @@ Yes. Because `composer.json` defines this package as a `library`, you can includ
 WordPress 6.7+ and PHP 8.2+.
 
 == Changelog ==
+
+= 0.2.0 =
+
+* Added GitHub-based auto-update support via scoped `bmd/github-wp-updater` dependency.
+* Plugin will now surface updates through the WordPress admin when new releases are published on GitHub.
 
 = 0.1.4 =
 

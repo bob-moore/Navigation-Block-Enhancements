@@ -1,6 +1,6 @@
 {
 	"name": "navigation-block-enhancements",
-	"version": "0.1.4",
+	"version": "0.2.0",
 	"description": "Adds rendering enhancements for the core Navigation block.",
 	"author": "Bob Moore",
 	"license": "GPL-2.0-or-later",
