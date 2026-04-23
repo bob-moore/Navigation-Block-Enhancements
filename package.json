@@ -1,6 +1,6 @@
 {
 	"name": "navigation-block-enhancements",
-	"version": "0.1.0",
+	"version": "0.1.4",
 	"description": "Adds rendering enhancements for the core Navigation block.",
 	"author": "Bob Moore",
 	"license": "GPL-2.0-or-later",
@@ -26,8 +26,8 @@
 		"stylelint-scss": "^6.14.0",
 		"webpack-remove-empty-scripts": "^1.1.1"
 	},
-	"files": [ 
-		"navigation-block-enhancements.php",
+	"files": [
+		"plugin.php",
 		"build",
 		"vendor",
 		"readme.txt",

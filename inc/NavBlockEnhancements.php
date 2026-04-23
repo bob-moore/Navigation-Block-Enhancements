@@ -16,16 +16,16 @@ namespace Bmd;
 /**
  * Service class for navigation block enhancements.
  */
-class NavBlockEnhancements
+class NavBlockEnhancements implements BasicPlugin
 {	
 	/**
-	* URI of this plugin/package
+	* URL of this plugin/package
 	*
 	* Used to enqueue block editor assets.
 	*
 	* @var string
 	*/
-	protected string $uri;
+	protected string $url;
 	/**
 	* Path of the plugin/package
 	*
@@ -37,28 +37,28 @@ class NavBlockEnhancements
 	/**
 	* Initialize the plugin.
 	*
-	* Sets the URI and path for this package.
+	* Sets the URL and path for this package.
 	*
-	* @param string $uri URI to the plugin directory.
+	* @param string $url URL to the plugin directory.
 	* @param string $path Absolute path to the plugin directory.
 	*/
 	public function __construct(
-		string $uri = '',
+		string $url = '',
 		string $path = ''
 	) {
-		$this->setUri( ! empty( $uri ) ? $uri : plugin_dir_url( __DIR__ ) );
-		$this->setPath( ! empty( $path ) ? $path : plugin_dir_path( __DIR__ ) );
+		$this->setUrl( ! empty( $url ) ? esc_url_raw( $url ) : plugin_dir_url( __DIR__ ) );
+		$this->setPath( ! empty( $path ) ? esc_html( $path ): plugin_dir_path( __DIR__ ) );
 	}
 	/**
-	* Setter for the URI property.
+	* Setter for the URL property.
 	*
-	* @param string $uri string URI to set.
+	* @param string $url string URL to set.
 	*
 	* @return void
 	*/
-	public function setUri( string $uri ): void
+	public function setUrl( string $url ): void
 	{
-		$this->uri = trailingslashit( $uri );
+		$this->url = trailingslashit( $url );
 	}
 
 	/**
@@ -137,11 +137,11 @@ class NavBlockEnhancements
 	 */
 	protected function buildUrl( string $relative_path ): string
 	{
-		if ( '' === $this->uri ) {
+		if ( '' === $this->url ) {
 			return '';
 		}
 
-		return $this->uri . 'build/' . ltrim( $relative_path, '/' );
+		return $this->url . 'build/' . ltrim( $relative_path, '/' );
 	}
 
 	/**

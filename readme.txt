@@ -3,7 +3,7 @@ Contributors: Bob Moore
 Tags: navigation, gutenberg, block editor, menus, accessibility
 Requires at least: 6.7
 Tested up to: 6.7
-Stable tag: 0.1.3
+Stable tag: 0.1.4
 Requires PHP: 8.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -20,6 +20,7 @@ This plugin currently:
 * Keeps submenu behavior consistent for vertical navigation output.
 * Enqueues shared Navigation block styles from the plugin build assets.
 * Provides a reusable service class that can also be consumed through Composer in your own plugin or theme.
+* Provides a `BasicPlugin` interface for type-safe integration in consuming packages.
 
 == Installation ==
 
@@ -40,9 +41,10 @@ This plugin currently:
 3. Instantiate and hook the service in your bootstrap code:
 
 `use Bmd\NavBlockEnhancements;`
+`use Bmd\BasicPlugin;`
 `$enhancements = new NavBlockEnhancements();`
-`add_action( 'init', [ $enhancements, 'enqueueStyles' ] );`
-`add_filter( 'render_block_core/navigation', [ $enhancements, 'processNavigationBlock' ], 10, 2 );`
+`/** @var BasicPlugin $enhancements */`
+`$enhancements->mount();`
 
 == Frequently Asked Questions ==
 
@@ -59,6 +61,12 @@ Yes. Because `composer.json` defines this package as a `library`, you can includ
 WordPress 6.7+ and PHP 8.2+.
 
 == Changelog ==
+
+= 0.1.4 =
+
+* Added a `BasicPlugin` interface for type-safe usage in consuming packages.
+* Updated `NavBlockEnhancements` to implement the interface.
+* Updated documentation and release metadata for 0.1.4.
 
 = 0.1.3 =
 
@@ -77,6 +85,10 @@ WordPress 6.7+ and PHP 8.2+.
 * Added shared Navigation block stylesheet enqueue from build assets.
 
 == Upgrade Notice ==
+
+= 0.1.4 =
+
+Adds the `BasicPlugin` interface and updates integration docs.
 
 = 0.1.3 =
 
