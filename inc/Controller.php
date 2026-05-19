@@ -84,8 +84,7 @@ class Controller
 		);
 
 		if ( $this->config['config.cache'] ) {
-
-			$cache_key = "container" . md5( json_encode( $this->config));
+			$cache_key = 'container' . md5( json_encode( $this->config ) );
 
 			if ( ! is_file( dirname( __DIR__ ) . '/cache/' . $cache_key . '.php' ) ) {
 				$this->clearContainerCache();
@@ -109,7 +108,7 @@ class Controller
 	protected function clearContainerCache(): void
 	{
 		$files = glob( dirname( __DIR__ ) . '/cache/container*.php' );
-		
+
 		if ( is_array( $files ) ) {
 			foreach ( $files as $file ) {
 				unlink( $file );
