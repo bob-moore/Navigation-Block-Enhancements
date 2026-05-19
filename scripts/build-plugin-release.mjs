@@ -35,7 +35,7 @@ function main() {
 
 	runWpifyScoper();
 	patchPluginSourceForScopedRuntime();
-	rebuildCompiledContainerCache();
+	createEmptyCacheDir();
 	removeBuildOnlyFiles();
 	createZip();
 
@@ -147,11 +147,14 @@ function patchPluginSourceForScopedRuntime() {
 		return;
 	}
 
-	for ( const filePath of listFiles( path.join( stagingDir, 'inc' ) ) ) {
-		if ( ! filePath.endsWith( '.php' ) ) {
-			continue;
-		}
+	const phpFiles = [
+		...fs.readdirSync( stagingDir, { withFileTypes: true } )
+			.filter( ( e ) => e.isFile() && e.name.endsWith( '.php' ) )
+			.map( ( e ) => path.join( stagingDir, e.name ) ),
+		...listFiles( path.join( stagingDir, 'inc' ) ).filter( ( f ) => f.endsWith( '.php' ) ),
+	];
 
+	for ( const filePath of phpFiles ) {
 		let contents = fs.readFileSync( filePath, 'utf8' );
 
 		for ( const [ search, replace ] of replacements ) {
@@ -162,37 +165,9 @@ function patchPluginSourceForScopedRuntime() {
 	}
 }
 
-function rebuildCompiledContainerCache() {
+function createEmptyCacheDir() {
 	const cacheDir = path.join( stagingDir, 'cache' );
 	cleanDirectory( cacheDir );
-
-	// Derive the controller FQCN from composer.json autoload so this script
-	// works without changes after create-plugin.php is run.
-	const namespace = Object.keys( composerJson.autoload?.[ 'psr-4' ] ?? {} )[ 0 ]?.replace( /\\+$/, '' ) ?? '';
-
-	const scopedAutoload = path.join( stagingDir, 'vendor/scoped/autoload.php' );
-	const scoperAutoload = path.join( stagingDir, 'vendor/scoped/scoper-autoload.php' );
-	const composerAutoload = path.join( stagingDir, 'vendor/autoload.php' );
-	const pluginUrl = `https://example.invalid/wp-content/plugins/${ pluginFolder }/`;
-
-	const phpCode = `
-		$root = ${ phpString( stagingDir ) };
-		$plugin_url = ${ phpString( pluginUrl ) };
-
-		require_once ${ phpString( scopedAutoload ) };
-		require_once ${ phpString( scoperAutoload ) };
-		require_once ${ phpString( composerAutoload ) };
-
-		$controller = new \\${ namespace }\\Controller(
-			$plugin_url,
-			$root . '/',
-			true
-		);
-	`;
-
-	run( 'php', [ '-r', phpCode ], {
-		label: 'rebuild compiled container cache',
-	} );
 }
 
 function removeBuildOnlyFiles() {
@@ -238,10 +213,6 @@ function readJsonIfExists( filePath ) {
 
 function writeJson( filePath, value ) {
 	fs.writeFileSync( filePath, `${ JSON.stringify( value, null, '\t' ) }\n` );
-}
-
-function phpString( value ) {
-	return `'${ String( value ).replaceAll( '\\', '\\\\' ).replaceAll( '\'', '\\\'' ) }'`;
 }
 
 function run( command, args, { label, cwd } = {} ) {

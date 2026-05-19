@@ -8,13 +8,12 @@
  * @author  Bob Moore <bob@bobmoore.dev>
  * @license GPL-2.0-or-later
  * @link    https://github.com/bob-moore/Navigation-Block-Enhancements
- * @since   1.0.0
  *
  * @wordpress-plugin
  * Plugin Name: Navigation Block Enhancements
  * Plugin URI:  https://github.com/bob-moore/Navigation-Block-Enhancements
  * Description: Enhance the core navigation block.
- * Version:     1.0.0
+ * Version:     0.3.0
  * Author:      Bob Moore
  * Author URI:  https://www.bobmoore.dev
  * Requires at least: 6.9
