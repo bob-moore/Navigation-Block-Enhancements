@@ -1,5 +1,4 @@
 {
-    "chat.tools.terminal.autoApprove": {
-        "git tag": true
-    }
+    "compile-hero.disable-compile-files-on-did-save-code": true,
+    "git.ignoreLimitWarning": true
 }

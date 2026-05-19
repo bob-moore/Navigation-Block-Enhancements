@@ -1,5 +1,5 @@
 {
     "require": {
-        "bmd/github-wp-updater": "*"
+        "bmd/github-wp-updater": "^0.1.2"
     }
 }

@@ -7,7 +7,7 @@ const { getAsBooleanFromENV } = require( '@wordpress/scripts/utils' );
  */
 const path = require( 'path' );
 const RemoveEmptyScriptsPlugin = require( 'webpack-remove-empty-scripts' );
-const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
+// const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 /**
  * Check if the --experimental-modules flag is set.
  */
@@ -25,9 +25,11 @@ const [ scriptConfig ] = defaultConfigs;
 /**
  * Filter plugins from the default config
  */
-// const plugins = scriptConfig.plugins.filter( ( item ) => {
-// 	return ! [ 'MiniCssExtractPlugin' ].includes( item.constructor.name );
-// } );
+const plugins = scriptConfig.plugins.filter( ( item ) => {
+	return ! [ 'CopyPlugin' ].includes(
+		item.constructor.name
+	);
+} );
 
 /**
  * Webpack configuration
@@ -35,12 +37,28 @@ const [ scriptConfig ] = defaultConfigs;
 const assetConfig = {
 	...scriptConfig,
 	entry: {
-		index: path.resolve( __dirname, 'src', 'style.scss' ),
+		'style': [
+			path.resolve( __dirname, 'src', 'index.scss' ),
+		],
+		editor: [
+			path.resolve( __dirname, 'src', 'editor.ts' ),
+		]
+	},
+	output: {
+		path: path.resolve( __dirname, 'build' ),
+		filename: '[name].js',
+		clean: false,
+	},
+	resolve: {
+		...scriptConfig.resolve,
+		alias: {
+			'@images': path.resolve( __dirname, 'src/images' ),
+		},
 	},
 	plugins: [
-		...scriptConfig.plugins,
-		new RemoveEmptyScriptsPlugin()
-	]
+		...plugins,
+		new RemoveEmptyScriptsPlugin(),
+	],
 };
 
 module.exports = () => {

@@ -1,36 +1,60 @@
 {
-	"name": "navigation-block-enhancements",
-	"version": "0.2.0",
-	"description": "Adds rendering enhancements for the core Navigation block.",
-	"author": "Bob Moore",
+	"name": "navigation_block_enhancements",
+	"version": "1.0.0",
+	"description": "Enhance the core navigation block",
+	"author": "Bob Moore <bob@bobmoore.dev>",
 	"license": "GPL-2.0-or-later",
-	"private": true,
-	"engines": {
-		"node": ">=18.12.0",
-		"npm": ">=8.19.2"
-	},
-	"scripts": {
-		"build": "wp-scripts build --experimental-modules",
-		"format": "wp-scripts format",
-		"lint:css": "wp-scripts lint-style",
-		"lint:js": "wp-scripts lint-js",
-		"packages-update": "wp-scripts packages-update",
-		"plugin-zip": "wp-scripts plugin-zip",
-		"start": "wp-scripts start --experimental-modules"
-	},
+	"keywords": [
+		"plugin",
+		"wordpress"
+	],
+	"homepage": "https://github.com/bob-moore/Navigation-Block-Enhancements",
+	"repository": "https://github.com/bmd/navigation-block-enhancements",
+	"bugs": "https://github.com/bmd/navigation-block-enhancements/issues",
+	"browserslist": [
+		"last 3 version",
+		"> 1%",
+		"not dead"
+	],
+	"files": [
+		"dist",
+		"includes",
+		"vendor"
+	],
 	"devDependencies": {
-		"@wordpress/scripts": "^31.2.0",
-		"@wordpress/stylelint-config": "^23.29.0",
-		"mini-css-extract-plugin": "^2.9.4",
-		"stylelint": "^16.26.1",
-		"stylelint-scss": "^6.14.0",
+		"@playwright/test": "^1.60.0",
+		"@wordpress/block-editor": "^15.16.0",
+		"@wordpress/blocks": "^15.16.0",
+		"@wordpress/compose": "^7.46.0",
+		"@wordpress/hooks": "^4.46.0",
+		"@wordpress/i18n": "^6.19.0",
+		"@wordpress/scripts": "^31.8.0",
+		"autoprefixer": "^10.5.0",
+		"mini-css-extract-plugin": "^2.10.2",
+		"postcss": "^8.5.9",
+		"postcss-pxtorem": "^6.1.0",
+		"sass": "^1.99.0",
 		"webpack-remove-empty-scripts": "^1.1.1"
 	},
-	"files": [
-		"plugin.php",
-		"build",
-		"vendor",
-		"readme.txt",
-		"inc"
-	]
+	"scripts": {
+		"build": "npm run fix:css && npm run fix:js && npm run compile",
+		"compile": "wp-scripts build --webpack-copy-php --experimental-modules --blocks-manifest",
+		"start": "wp-scripts start --webpack-copy-php --experimental-modules --blocks-manifest",
+		"start:hot": "wp-scripts start --hot",
+		"block-manifest": "wp-scripts build-blocks-manifest",
+		"check-engines": "wp-scripts check-engines",
+		"check-licenses": "wp-scripts check-licenses --prod --gpl2",
+		"format": "wp-scripts format",
+		"lint:css": "wp-scripts lint-style './src/**/*.scss'",
+		"fix:css": "wp-scripts lint-style './src/**/*.scss' --fix",
+		"lint:js": "wp-scripts lint-js './src/**/*.ts' './src/**/*.tsx'",
+		"fix:js": "wp-scripts lint-js './src/**/*.ts' './src/**/*.tsx' --fix",
+		"lint:md:docs": "wp-scripts lint-md-docs",
+		"lint:pkg-json": "wp-scripts lint-pkg-json",
+		"packages-update": "wp-scripts packages-update",
+		"plugin-zip": "npm run build && node scripts/build-plugin-release.mjs",
+		"test:e2e": "WP_BASE_URL=http://localhost:8888 WP_USERNAME=admin WP_PASSWORD=password wp-scripts test-playwright",
+		"test:unit": "wp-scripts test-unit-js",
+		"update:all": "npx npm-check-updates -u"
+	}
 }

@@ -1,0 +1,15 @@
+{
+    "core": null,
+    "mappings": {
+        "wp-content/plugins/navigation-block-enhancements": "./"
+    },
+    "config": {
+        "WP_DEBUG": true,
+        "WP_DEBUG_LOG": "wp-content/plugins/navigation-block-enhancements/debug.log",
+        "WP_DEBUG_DISPLAY": false,
+        "SCRIPT_DEBUG": false,
+        "WP_DEVELOPMENT_MODE": "theme",
+        "WP_ENVIRONMENT_TYPE": "local",
+        "WP_CACHE": false
+    }
+}

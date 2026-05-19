@@ -1,55 +1,89 @@
 {
     "name": "bmd/navigation-block-enhancements",
-    "description": "Enhance the core navigation block for vertical dropdown support",
+    "description": "Enhance the core navigation block",
     "type": "library",
-    "author": "Bob Moore <bob@bobmoore.dev>",
-    "homepage": "https://github.com/bob-moore/Navigation-Block-Enhancements",
     "license": "GPL-2.0-or-later",
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
-        "optimize-autoloader": true,
+        "optimize-autoloader": false,
         "vendor-dir": "vendor",
         "platform": {
-            "php": "8.1"
+            "php": "8.2"
         },
         "allow-plugins": {
             "composer/installers": true,
             "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phpstan/extension-installer": true,
             "wpify/scoper": true
-        }
-    },
-    "extra": {
-        "wpify-scoper": {
-            "prefix": "Bmd\\NavBlockEnhancements",
-            "slug": "navigation-block-enhancements",
-            "folder": "./vendor/scoped",
-            "composerjson": "composer-deps.json",
-            "composerlock": "composer-deps.lock"
         }
     },
     "autoload": {
         "psr-4": {
-            "Bmd\\": "./inc"
+            "Bmd\\NavBlockEnhancements\\": "inc"
         }
     },
-    "require": {},
+    "autoload-dev": {
+        "psr-4": {
+            "Bmd\\NavBlockEnhancements\\PHPUnit\\": "tests/phpunit"
+        }
+    },
+    "require": {
+        "php-di/php-di": "^7.1"
+    },
     "require-dev": {
-        "wpify/scoper": "^3.0",
         "squizlabs/php_codesniffer": "^3.7",
+        "phpunit/phpunit": "^9.6",
         "symfony/var-dumper": "*",
         "wp-coding-standards/wpcs": "^3.0",
         "phpstan/phpstan": "^1.10",
         "szepeviktor/phpstan-wordpress": "^1.3",
-        "phpcsstandards/phpcsutils": "^1.0"
+        "phpcsstandards/phpcsutils": "^1.0",
+        "wpify/scoper": "^3.2",
+        "10up/wp_mock": "*",
+        "bmd/github-wp-updater": "^0.1.2"
     },
     "scripts": {
-        "phpstan": "./vendor/bin/phpstan analyze -c ./phpstan.neon --memory-limit=2048M",
-        "phpsniff": "./vendor/bin/phpcs ./inc -v --standard='./phpcs.xml'",
-        "phpsniff:fix": "./vendor/bin/phpcbf ./inc -v --standard='./phpcs.xml'",
+        "build-release": "node scripts/build-plugin-release.mjs",
+        "create-plugin": "@php scripts/create-plugin.php",
+        "phpstan": "./vendor/bin/phpstan analyze -c ./tests/phpstan.neon --memory-limit=2048M",
+        "phpsniff": "./vendor/bin/phpcs ./inc -v --standard='./tests/phpcs.xml'",
+        "phpsniff:fix": "./vendor/bin/phpcbf ./inc -v --standard='./tests/phpcs.xml'",
         "phpsniff:default": "./vendor/bin/phpcs ./inc -v",
         "phpsniff:PSR12": "./vendor/bin/phpcs ./inc -v --standard='PSR12'",
         "phpsniff:PSR2": "./vendor/bin/phpcs ./inc -v --standard='PSR2'",
-        "phpsniff:WP": "./vendor/bin/phpcs ./inc -v --standard='WordPress'"
+        "phpsniff:WP": "./vendor/bin/phpcs ./inc -v --standard='WordPress'",
+        "phpunit": "./vendor/bin/phpunit --configuration ./tests/phpunit.xml --verbose"
+    },
+    "extra": {
+        "plugin-release": {
+            "files": [
+                "assets",
+                "build",
+                "inc",
+                "README.md",
+                "readme.md",
+                "readme.txt",
+                "LICENSE",
+                "license.txt",
+                "navigation-block-enhancements.php"
+            ]
+        },
+        "wpify-scoper": {
+            "prefix": "Bmd\\NavBlockEnhancements",
+            "slug": "navigation_block_enhancements",
+            "folder": "./vendor/scoped",
+            "globals": [
+                "wordpress",
+                "woocommerce"
+            ],
+            "composerjson": "composer-deps.json",
+            "composerlock": "composer-deps.lock",
+            "autorun": false,
+            "source-namespace-patches": [
+                "DI\\",
+                "Bmd\\GithubWpUpdater"
+            ]
+        }
     }
 }
