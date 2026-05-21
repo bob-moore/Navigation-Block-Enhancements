@@ -10,10 +10,12 @@
 
 namespace Bmd\NavBlockEnhancements\Processors;
 
+use Bmd\NavBlockEnhancements\Module;
+
 /**
  * Processes rendered core navigation block markup.
  */
-class Modal
+class Modal extends Module
 {
 	/**
 	 * Remove focusout handler for the mobile modal container.
@@ -26,7 +28,7 @@ class Modal
 	 *
 	 * @return string
 	 */
-	public function renderBlock( string $block_content, array $block ): string
+	public function removeFocusOut( string $block_content, array $block ): string
 	{
 		$overlay_menu = $block['attrs']['overlayMenu'] ?? 'mobile';
 

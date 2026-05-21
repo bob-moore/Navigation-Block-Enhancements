@@ -10,10 +10,12 @@
 
 namespace Bmd\NavBlockEnhancements\Processors;
 
+use Bmd\NavBlockEnhancements\Module;
+
 /**
  * Processes rendered core navigation block markup.
  */
-class DropDown
+class DropDown extends Module
 {
 	/**
 	 * Filter rendered block content.

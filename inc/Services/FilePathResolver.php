@@ -29,7 +29,7 @@ class FilePathResolver
 	 *
 	 * @param string $path Root path of the plugin.
 	 */
-	#[Inject( [ 'path' => 'config.path' ] )]
+	#[Inject( [ 'path' => 'path' ] )]
 	public function __construct( string $path )
 	{
 		$this->setDir( $path );

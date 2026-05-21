@@ -10,10 +10,12 @@
 
 namespace Bmd\NavBlockEnhancements\Processors;
 
+use Bmd\NavBlockEnhancements\Module;
+
 /**
  * Processes rendered core navigation block markup.
  */
-class Colors
+class Colors extends Module
 {
 	/**
 	 * Add frontend focus/hover color variables to the core/navigation wrapper.

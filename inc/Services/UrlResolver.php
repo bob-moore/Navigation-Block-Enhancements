@@ -29,7 +29,7 @@ class UrlResolver
 	 *
 	 * @param string $url Root URL of the plugin.
 	 */
-	#[Inject( [ 'url' => 'config.url' ] )]
+	#[Inject( [ 'url' => 'url' ] )]
 	public function __construct( string $url )
 	{
 		$this->setUrl( $url );
