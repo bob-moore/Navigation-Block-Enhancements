@@ -39,17 +39,17 @@ class Controller extends Module
 	/**
 	 * Register WordPress filter hooks.
 	 *
-	 * @param Processors\DropDown $dropdown      Dropdown processor.
-	 * @param Processors\Colors   $colors        Color processor.
-	 * @param Processors\Modal    $modal         Modal processor.
+	 * @param Transformers\DropDown $dropdown      Dropdown transformer.
+	 * @param Transformers\Colors   $colors        Color transformer.
+	 * @param Transformers\Modal    $modal         Modal transformer.
 	 *
 	 * @return void
 	 */
 	#[Inject]
 	public function registerFilters(
-		Processors\DropDown $dropdown,
-		Processors\Colors $colors,
-		Processors\Modal $modal,
+		Transformers\DropDown $dropdown,
+		Transformers\Colors $colors,
+		Transformers\Modal $modal,
 	): void {
 		add_filter( 'render_block_core/navigation', [ $dropdown, 'renderBlock' ], 10, 2 );
 		add_filter( 'render_block_core/navigation', [ $colors, 'renderBlock' ], 10, 2 );

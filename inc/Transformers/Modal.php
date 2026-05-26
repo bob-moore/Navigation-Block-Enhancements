@@ -1,6 +1,6 @@
 <?php
 /**
- * Core navigation processor.
+ * Core navigation transformer.
  *
  * @package Bmd_NavBlockEnhancements
  * @author  Bob Moore <bob@bobmoore.dev>
@@ -8,12 +8,12 @@
  * @link    https://github.com/bob-moore/Navigation-Block-Enhancements
  */
 
-namespace Bmd\NavBlockEnhancements\Processors;
+namespace Bmd\NavBlockEnhancements\Transformers;
 
 use Bmd\NavBlockEnhancements\Module;
 
 /**
- * Processes rendered core navigation block markup.
+ * Transforms rendered core navigation block markup.
  */
 class Modal extends Module
 {
@@ -36,18 +36,18 @@ class Modal extends Module
 			return $block_content;
 		}
 
-		$processor = new \WP_HTML_Tag_Processor( $block_content );
+		$transformer = new \WP_HTML_Tag_Processor( $block_content );
 
 		if (
-			$processor->next_tag(
+			$transformer->next_tag(
 				[
 					'class'    => 'wp-block-navigation__responsive-container',
 					'tag_name' => 'div',
 				]
 			)
 		) {
-			$processor->remove_attribute( 'data-wp-on--focusout' );
-			return $processor->get_updated_html();
+			$transformer->remove_attribute( 'data-wp-on--focusout' );
+			return $transformer->get_updated_html();
 		}
 
 		return $block_content;

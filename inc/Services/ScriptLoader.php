@@ -24,11 +24,11 @@ class ScriptLoader extends AssetLoader
 	 * Register a script, auto-resolving dependencies and version from the
 	 * companion .asset.php when the source is a local file.
 	 *
-	 * @param string            $handle       Script handle.
-	 * @param string            $src          Relative path or full URL.
-	 * @param array<int,string> $dependencies Additional dependencies.
-	 * @param string|null       $version      Version override.
-	 * @param array|bool        $args         wp_register_script args (in_footer etc.).
+	 * @param string                   $handle       Script handle.
+	 * @param string                   $src          Relative path or full URL.
+	 * @param array<int,string>        $dependencies Additional dependencies.
+	 * @param string|null              $version      Version override.
+	 * @param array<string,mixed>|bool $args  wp_register_script args (in_footer etc.).
 	 *
 	 * @return bool
 	 */
@@ -64,11 +64,11 @@ class ScriptLoader extends AssetLoader
 	/**
 	 * Register and enqueue a script.
 	 *
-	 * @param string                 $handle       Script handle.
-	 * @param string                 $src          Relative path or full URL.
-	 * @param array<int,string>|null $dependencies Additional dependencies.
-	 * @param string|null            $version      Version override.
-	 * @param array|bool|null        $args         wp_register_script args.
+	 * @param string                        $handle       Script handle.
+	 * @param string                        $src          Relative path or full URL.
+	 * @param array<int,string>|null        $dependencies Additional dependencies.
+	 * @param string|null                   $version      Version override.
+	 * @param array<string,mixed>|bool|null $args  wp_register_script args.
 	 *
 	 * @return bool
 	 */

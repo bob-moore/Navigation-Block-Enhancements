@@ -46,7 +46,7 @@ add_filter( 'navigation_block_enhancements_enable_dev_mode', '__return_true' );
 ### Architecture
 
 - Boots through a single `Controller` that builds a small PHP-DI container and mounts all WordPress hooks.
-- Splits responsibilities into focused services, providers, and processors:
+- Splits responsibilities into focused services, providers, and transformers:
     - `AssetLoader` registers editor assets and block-scoped styles for `core/navigation`.
     - `DropDown` processes vertical Navigation block markup with `WP_HTML_Tag_Processor`.
     - `Modal` optionally removes responsive overlay focusout behavior for development/debugging.
@@ -140,7 +140,14 @@ The following CSS custom properties are available for theming:
 
 ## Changelog
 
-### 1.0.0
+### 0.4.1
+
+- Hardened package slug injection before it is used in WordPress hook names.
+- Switched asset registration to fixed, explicit handles for safer loading.
+- Fixed plugin URL resolution when running as the standalone plugin.
+- Renamed navigation markup processors to transformers to better match their role.
+
+### 0.4.0
 
 - Rebuilt the plugin around a focused PHP-DI controller and provider/processor services.
 - Added editor controls for Navigation item hover/focus text and background colors.

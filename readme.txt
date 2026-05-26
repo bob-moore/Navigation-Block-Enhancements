@@ -3,7 +3,7 @@ Contributors: Bob Moore
 Tags: navigation, gutenberg, block editor, menus, colors
 Requires at least: 6.9
 Tested up to: 7.0
-Stable tag: 0.3.0
+Stable tag: 0.4.1
 Requires PHP: 8.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -91,7 +91,14 @@ WordPress 6.9+ and PHP 8.2+.
 
 == Changelog ==
 
-= 1.0.0 =
+= 0.4.1 =
+
+* Hardened package slug injection before it is used in WordPress hook names.
+* Switched asset registration to fixed, explicit handles for safer loading.
+* Fixed plugin URL resolution when running as the standalone plugin.
+* Renamed navigation markup processors to transformers to better match their role.
+
+= 0.4.0 =
 
 * Rebuilt the plugin around a focused PHP-DI controller and provider/processor services.
 * Added editor controls for Navigation item hover/focus text and background colors.
@@ -105,6 +112,10 @@ WordPress 6.9+ and PHP 8.2+.
 
 == Upgrade Notice ==
 
-= 1.0.0 =
+= 0.4.1 =
+
+Hardens internal package slug handling and asset URL generation.
+
+= 0.4.0 =
 
 Adds Navigation hover/focus color controls and a rebuilt controller/provider/processor architecture.

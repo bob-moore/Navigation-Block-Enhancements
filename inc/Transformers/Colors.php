@@ -1,6 +1,6 @@
 <?php
 /**
- * Core navigation processor.
+ * Core navigation transformer.
  *
  * @package Bmd_NavBlockEnhancements
  * @author  Bob Moore <bob@bobmoore.dev>
@@ -8,12 +8,12 @@
  * @link    https://github.com/bob-moore/Navigation-Block-Enhancements
  */
 
-namespace Bmd\NavBlockEnhancements\Processors;
+namespace Bmd\NavBlockEnhancements\Transformers;
 
 use Bmd\NavBlockEnhancements\Module;
 
 /**
- * Processes rendered core navigation block markup.
+ * Transforms rendered core navigation block markup.
  */
 class Colors extends Module
 {
@@ -34,13 +34,13 @@ class Colors extends Module
 			return $block_content;
 		}
 
-		$processor = new \WP_HTML_Tag_Processor( $block_content );
+		$transformer = new \WP_HTML_Tag_Processor( $block_content );
 
-		if ( ! $processor->next_tag( [ 'class_name' => 'wp-block-navigation' ] ) ) {
+		if ( ! $transformer->next_tag( [ 'class_name' => 'wp-block-navigation' ] ) ) {
 			return $block_content;
 		}
 
-		$existing_classes = preg_split( '/\s+/', (string) $processor->get_attribute( 'class' ) );
+		$existing_classes = preg_split( '/\s+/', (string) $transformer->get_attribute( 'class' ) );
 		$existing_classes = false !== $existing_classes ? $existing_classes : [];
 
 		$classes = array_filter(
@@ -67,7 +67,7 @@ class Colors extends Module
 
 		$classes = array_filter( $classes );
 
-		$existing_style = trim( (string) $processor->get_attribute( 'style' ) );
+		$existing_style = trim( (string) $transformer->get_attribute( 'style' ) );
 
 		if ( '' !== $existing_style && ! str_ends_with( $existing_style, ';' ) ) {
 			$existing_style .= ';';
@@ -85,9 +85,9 @@ class Colors extends Module
 			]
 		);
 
-		$processor->set_attribute( 'class', implode( ' ', $classes ) );
-		$processor->set_attribute( 'style', implode( '', $styles ) );
+		$transformer->set_attribute( 'class', implode( ' ', $classes ) );
+		$transformer->set_attribute( 'style', implode( '', $styles ) );
 
-		return $processor->get_updated_html();
+		return $transformer->get_updated_html();
 	}
 }

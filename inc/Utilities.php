@@ -36,7 +36,7 @@ class Utilities
 
 		return 'theme' === self::getUsageContext()
 			? self::buildThemeUrl( $path )
-			: plugin_dir_url( $path );
+			: plugin_dir_url( $path . '/navigation-block-enhancements.php' );
 	}
 
 	/**

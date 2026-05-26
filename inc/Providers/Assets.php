@@ -18,6 +18,13 @@ use Bmd\NavBlockEnhancements\Services;
  */
 class Assets extends Module
 {
+	protected const EDITOR_SCRIPT_HANDLE = 'navigation-block-enhancements-editor';
+	protected const FRONTEND_SCRIPT_HANDLE = 'navigation-block-enhancements-frontend';
+	protected const FRONTEND_STYLE_HANDLE  = 'navigation-block-enhancements-frontend-styles';
+	protected const ADMIN_SCRIPT_HANDLE    = 'navigation-block-enhancements-admin';
+	protected const ADMIN_STYLE_HANDLE     = 'navigation-block-enhancements-admin-styles';
+	protected const BLOCK_STYLE_HANDLE     = 'navigation-block-enhancements-styles';
+
 	/**
 	 * Constructor.
 	 *
@@ -38,7 +45,7 @@ class Assets extends Module
 	public function enqueueEditorAssets(): void
 	{
 		$this->script_loader->enqueue(
-			handle: "{$this->package}-editor",
+			handle: self::EDITOR_SCRIPT_HANDLE,
 			src: 'build/editor.js'
 		);
 	}
@@ -51,12 +58,12 @@ class Assets extends Module
 	public function enqueueFrontendAssets(): void
 	{
 		$this->script_loader->enqueue(
-			handle: "{$this->package}-frontend",
+			handle: self::FRONTEND_SCRIPT_HANDLE,
 			src: 'build/frontend.js'
 		);
 
 		$this->style_loader->enqueue(
-			handle: "{$this->package}-frontend-styles",
+			handle: self::FRONTEND_STYLE_HANDLE,
 			src: 'build/frontend.css'
 		);
 	}
@@ -69,12 +76,12 @@ class Assets extends Module
 	public function enqueueAdminAssets(): void
 	{
 		$this->script_loader->enqueue(
-			handle: "{$this->package}-admin",
+			handle: self::ADMIN_SCRIPT_HANDLE,
 			src: 'build/admin.js'
 		);
 
 		$this->style_loader->enqueue(
-			handle: "{$this->package}-admin-styles",
+			handle: self::ADMIN_STYLE_HANDLE,
 			src: 'build/admin.css'
 		);
 	}
@@ -88,7 +95,7 @@ class Assets extends Module
 	{
 		$this->style_loader->enqueueBlockStyle(
 			block_name: 'core/navigation',
-			handle: "{$this->package}-styles",
+			handle: self::BLOCK_STYLE_HANDLE,
 			src: 'build/style.css',
 		);
 	}

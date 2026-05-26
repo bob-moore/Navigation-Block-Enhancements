@@ -1,6 +1,6 @@
 <?php
 /**
- * Core navigation processor.
+ * Core navigation transformer.
  *
  * @package Bmd_NavBlockEnhancements
  * @author  Bob Moore <bob@bobmoore.dev>
@@ -8,12 +8,12 @@
  * @link    https://github.com/bob-moore/Navigation-Block-Enhancements
  */
 
-namespace Bmd\NavBlockEnhancements\Processors;
+namespace Bmd\NavBlockEnhancements\Transformers;
 
 use Bmd\NavBlockEnhancements\Module;
 
 /**
- * Processes rendered core navigation block markup.
+ * Transforms rendered core navigation block markup.
  */
 class DropDown extends Module
 {
@@ -36,15 +36,15 @@ class DropDown extends Module
 		};
 
 		if ( 'vertical' === $orientation ) {
-			$processor = new \WP_HTML_Tag_Processor( $block_content );
+			$transformer = new \WP_HTML_Tag_Processor( $block_content );
 			$in_nav = false;
 
-			while ( $processor->next_tag() ) {
+			while ( $transformer->next_tag() ) {
 				/**
 				* We want to wait until we are in the nav menu to start
 				* mutating attributes. Otherwise we mess with the modal open/close
 				*/
-				if ( 'UL' === $processor->get_tag() && ! $in_nav ) {
+				if ( 'UL' === $transformer->get_tag() && ! $in_nav ) {
 					$in_nav = true;
 				}
 
@@ -54,10 +54,10 @@ class DropDown extends Module
 				/**
 				* Remove focusout for all vertical "dropdowns"
 				*/
-				$processor->remove_attribute( 'data-wp-on--focusout' );
+				$transformer->remove_attribute( 'data-wp-on--focusout' );
 			}
 
-			$block_content = $processor->get_updated_html();
+			$block_content = $transformer->get_updated_html();
 		}
 
 		return $block_content;

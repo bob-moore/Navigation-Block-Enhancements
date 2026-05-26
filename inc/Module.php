@@ -16,11 +16,28 @@ use DI\Attribute\Inject;
  * Abstract base for all injectable plugin classes.
  *
  * Provides package slug injection from the DI container so that every
- * module can use it in filter/action names and asset handles without
+ * module can use it in filter and action names without
  * receiving it manually through a constructor chain.
  */
 abstract class Module
 {
-	#[Inject( 'package' )]
+	/**
+	 * Package slug for this module.
+	 *
+	 * @var string
+	 */
 	protected string $package = '';
+
+	/**
+	 * Set the package slug.
+	 *
+	 * @param string $package Package slug.
+	 *
+	 * @return void
+	 */
+	#[Inject( [ 'package' => 'package' ] )]
+	public function setPackage( string $package ): void
+	{
+		$this->package = sanitize_key( str_replace( '-', '_', trim( $package ) ) );
+	}
 }
