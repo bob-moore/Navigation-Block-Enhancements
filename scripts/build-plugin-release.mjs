@@ -9,12 +9,21 @@ import process from 'node:process';
 const rootDir = process.cwd();
 const composerJson = readJson( path.join( rootDir, 'composer.json' ) );
 const pluginFolder = getPluginFolderName();
+const pluginNamespace = getPluginNamespace();
 const releaseRoot = path.join( os.tmpdir(), `${ pluginFolder }-release` );
 const stagingDir = path.join( releaseRoot, pluginFolder );
+const buildPhpIni = path.join( releaseRoot, 'php.ini' );
 const zipName = `${ pluginFolder }.zip`;
 const zipPath = path.join( rootDir, zipName );
 
 const distributablePaths = composerJson.extra?.[ 'plugin-release' ]?.files ?? [];
+const releaseExcludePatterns = composerJson.extra?.[ 'plugin-release' ]?.exclude ?? [];
+const composerCommand = getComposerCommand();
+const buildPhpEnv = {
+	...process.env,
+	PHPRC: buildPhpIni,
+	PHP_INI_SCAN_DIR: '',
+};
 
 main();
 
@@ -25,21 +34,62 @@ function getPluginFolderName() {
 	return packageSlug.replaceAll( /[^a-z0-9._-]/gi, '-' );
 }
 
+function getPluginNamespace() {
+	const namespaces = Object.keys( composerJson.autoload?.[ 'psr-4' ] ?? {} );
+	const namespace = namespaces[ 0 ] ?? '';
+
+	return namespace.replace( /\\+$/, '' );
+}
+
+function getComposerCommand() {
+	const result = spawnSync( 'which', [ 'composer' ], {
+		encoding: 'utf8',
+		shell: false,
+	} );
+	const composerBin = result.stdout.trim() || 'composer';
+
+	return {
+		command: 'php',
+		args: [
+			'-d',
+			'error_reporting=8191',
+			composerBin,
+		],
+	};
+}
+
 function main() {
 	cleanDirectory( releaseRoot );
+	writeBuildPhpIni();
 	fs.mkdirSync( stagingDir, { recursive: true } );
 
 	copyDistributableFiles();
 	writeReleaseComposerDepsJson();
 	writeReleaseComposerJson();
+	copyScoperCustomConfig();
 
 	runWpifyScoper();
 	patchPluginSourceForScopedRuntime();
-	createEmptyCacheDir();
+	rebuildCompiledContainerCache();
 	removeBuildOnlyFiles();
 	createZip();
 
 	console.log( `\nRelease zip ready: ${ zipName }` );
+}
+
+function writeBuildPhpIni() {
+	fs.writeFileSync(
+		buildPhpIni,
+		[
+			'error_reporting = E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED',
+			'display_errors = stderr',
+			'log_errors = On',
+			'memory_limit = -1',
+			'date.timezone = UTC',
+			'phar.readonly = Off',
+			'',
+		].join( '\n' )
+	);
 }
 
 function copyDistributableFiles() {
@@ -54,9 +104,24 @@ function copyDistributableFiles() {
 		fs.cpSync( source, destination, {
 			recursive: true,
 			filter: ( currentSource ) =>
-				! currentSource.includes( `${ path.sep }.DS_Store` ),
+				! shouldExcludeReleasePath( currentSource ),
 		} );
 	}
+}
+
+function shouldExcludeReleasePath( filePath ) {
+	const basename = path.basename( filePath );
+
+	return '.DS_Store' === basename || releaseExcludePatterns.some(
+		( pattern ) => matchesSimpleGlob( pattern, basename )
+	);
+}
+
+function matchesSimpleGlob( pattern, value ) {
+	const escaped = pattern.replace( /[.+^${}()|[\]\\]/g, '\\$&' ).replaceAll( '*', '.*' );
+	const regex = new RegExp( `^${ escaped }$` );
+
+	return regex.test( value );
 }
 
 function writeReleaseComposerDepsJson() {
@@ -95,7 +160,7 @@ function writeReleaseComposerDepsJson() {
 function writeReleaseComposerJson() {
 	const releaseComposer = structuredClone( composerJson );
 
-	// Production deps are scoped via composer-deps.json — not needed in require.
+	// Production deps are scoped via composer-deps.json, not needed in require.
 	delete releaseComposer.require;
 
 	// wpify/scoper drives the scoping during composer install; stripped by --no-dev after.
@@ -113,29 +178,42 @@ function writeReleaseComposerJson() {
 	writeJson( path.join( stagingDir, 'composer.json' ), releaseComposer );
 }
 
+function copyScoperCustomConfig() {
+	const src = path.join( rootDir, 'scoper.custom.php' );
+	if ( fs.existsSync( src ) ) {
+		fs.copyFileSync( src, path.join( stagingDir, 'scoper.custom.php' ) );
+	}
+}
+
 function runWpifyScoper() {
-	// Full install: resolves deps, locks them, and wpify/scoper autorun creates vendor/scoped.
-	run( 'composer', [
+	run( composerCommand.command, [
+		...composerCommand.args,
 		'install',
 		`--working-dir=${ stagingDir }`,
 		'--optimize-autoloader',
 	], {
 		label: 'composer install (with scoping)',
+		env: buildPhpEnv,
 	} );
 
-	// Strip dev deps (wpify/scoper and its tree) — vendor/scoped is already built.
-	run( 'composer', [
+	run( composerCommand.command, [
+		...composerCommand.args,
 		'install',
 		`--working-dir=${ stagingDir }`,
 		'--no-dev',
 		'--optimize-autoloader',
 	], {
 		label: 'composer install --no-dev (strip build tools)',
+		env: buildPhpEnv,
 	} );
 }
 
-
 function patchPluginSourceForScopedRuntime() {
+	patchPhpNamespaceReferences( path.join( stagingDir, 'inc' ) );
+	patchPhpNamespaceReferences( path.join( stagingDir, `${ pluginFolder }.php` ) );
+}
+
+function patchPhpNamespaceReferences( directory ) {
 	const prefix = composerJson.extra?.[ 'wpify-scoper' ]?.prefix ?? '';
 	const namespacesToPatch = composerJson.extra?.[ 'wpify-scoper' ]?.[ 'source-namespace-patches' ] ?? [];
 
@@ -147,14 +225,11 @@ function patchPluginSourceForScopedRuntime() {
 		return;
 	}
 
-	const phpFiles = [
-		...fs.readdirSync( stagingDir, { withFileTypes: true } )
-			.filter( ( e ) => e.isFile() && e.name.endsWith( '.php' ) )
-			.map( ( e ) => path.join( stagingDir, e.name ) ),
-		...listFiles( path.join( stagingDir, 'inc' ) ).filter( ( f ) => f.endsWith( '.php' ) ),
-	];
+	for ( const filePath of listFiles( directory ) ) {
+		if ( ! filePath.endsWith( '.php' ) ) {
+			continue;
+		}
 
-	for ( const filePath of phpFiles ) {
 		let contents = fs.readFileSync( filePath, 'utf8' );
 
 		for ( const [ search, replace ] of replacements ) {
@@ -165,13 +240,148 @@ function patchPluginSourceForScopedRuntime() {
 	}
 }
 
-function createEmptyCacheDir() {
+function rebuildCompiledContainerCache() {
 	const cacheDir = path.join( stagingDir, 'cache' );
 	cleanDirectory( cacheDir );
+
+	const scopedAutoload = path.join( stagingDir, 'vendor/scoped/autoload.php' );
+	const scoperAutoload = path.join( stagingDir, 'vendor/scoped/scoper-autoload.php' );
+	const composerAutoload = path.join( stagingDir, 'vendor/autoload.php' );
+	const pluginUrl = `https://example.invalid/wp-content/plugins/${ pluginFolder }/`;
+	const mainClass = `\\${ pluginNamespace }\\Main`;
+
+	const phpCode = `
+		$root = ${ phpString( stagingDir ) };
+		$plugin_url = ${ phpString( pluginUrl ) };
+
+		require_once ${ phpString( scopedAutoload ) };
+		require_once ${ phpString( scoperAutoload ) };
+		require_once ${ phpString( composerAutoload ) };
+
+		if (! defined('ABSPATH')) {
+			define('ABSPATH', $root . '/');
+		}
+
+		if (function_exists('wp_get_environment_type')) {
+			$environment = wp_get_environment_type();
+		} else {
+			function wp_get_environment_type() {
+				return 'production';
+			}
+		}
+
+		if (! function_exists('wp_normalize_path')) {
+			function wp_normalize_path($path) {
+				$path = str_replace('\\\\', '/', (string) $path);
+				$path = preg_replace('|(?<=.)/+|', '/', $path);
+
+				return $path;
+			}
+		}
+
+		if (! function_exists('wp_mkdir_p')) {
+			function wp_mkdir_p($target) {
+				return is_dir($target) || mkdir($target, 0777, true);
+			}
+		}
+
+		if (! function_exists('plugin_dir_path')) {
+			function plugin_dir_path($file) {
+				return trailingslashit(dirname((string) $file));
+			}
+		}
+
+		if (! function_exists('plugin_dir_url')) {
+			function plugin_dir_url($file) {
+				global $plugin_url, $root;
+
+				$directory = wp_normalize_path(dirname((string) $file));
+				$relative = ltrim(str_replace(wp_normalize_path($root), '', $directory), '/');
+
+				return trailingslashit($plugin_url . $relative);
+			}
+		}
+
+		if (! function_exists('get_theme_file_path')) {
+			function get_theme_file_path($file = '') {
+				return '';
+			}
+		}
+
+		if (! function_exists('get_theme_file_uri')) {
+			function get_theme_file_uri($file = '') {
+				return (string) $file;
+			}
+		}
+
+		if (! function_exists('add_action')) {
+			function add_action($hook_name, $callback, $priority = 10, $accepted_args = 1) {
+				return true;
+			}
+		}
+
+		if (! function_exists('add_filter')) {
+			function add_filter($hook_name, $callback, $priority = 10, $accepted_args = 1) {
+				return true;
+			}
+		}
+
+		if (! function_exists('do_action')) {
+			function do_action($hook_name, ...$args) {
+				return null;
+			}
+		}
+
+		if (! function_exists('apply_filters')) {
+			function apply_filters($hook_name, $value, ...$args) {
+				return $value;
+			}
+		}
+
+		if (! function_exists('sanitize_key')) {
+			function sanitize_key($key) {
+				$key = strtolower((string) $key);
+				return preg_replace('/[^a-z0-9_\\-]/', '', $key);
+			}
+		}
+
+		if (! function_exists('esc_url_raw')) {
+			function esc_url_raw($url) {
+				return (string) $url;
+			}
+		}
+
+		if (! function_exists('trailingslashit')) {
+			function trailingslashit($value) {
+				return rtrim((string) $value, "/\\\\") . '/';
+			}
+		}
+
+		if (! function_exists('untrailingslashit')) {
+			function untrailingslashit($value) {
+				return rtrim((string) $value, "/\\\\");
+			}
+		}
+
+		$main_class = ${ phpString( mainClass ) };
+		$main = new $main_class([
+			'cache' => true,
+			'path'  => $root,
+			'url'   => $plugin_url,
+		]);
+
+		$initializer = new \\ReflectionMethod($main_class, 'initContainer');
+		$initializer->setAccessible(true);
+		$initializer->invoke($main);
+	`;
+
+	run( 'php', [ '-r', phpCode ], {
+		label: 'rebuild compiled container cache',
+		env: buildPhpEnv,
+	} );
 }
 
 function removeBuildOnlyFiles() {
-	// Strip build-only Composer files from the distribution.
 	const composerJsonPath = path.join( stagingDir, 'composer.json' );
 	const releaseComposerJson = readJson( composerJsonPath );
 	delete releaseComposerJson[ 'require-dev' ];
@@ -180,8 +390,7 @@ function removeBuildOnlyFiles() {
 	}
 	writeJson( composerJsonPath, releaseComposerJson );
 
-	// Remove build-only files not needed in the distribution.
-	for ( const relativePath of [ 'composer-deps.json', 'composer-deps.lock', 'composer.json', 'composer.lock' ] ) {
+	for ( const relativePath of [ 'composer-deps.json', 'composer-deps.lock', 'composer.json', 'composer.lock', 'scoper.custom.php' ] ) {
 		fs.rmSync( path.join( stagingDir, relativePath ), { force: true } );
 	}
 }
@@ -215,11 +424,16 @@ function writeJson( filePath, value ) {
 	fs.writeFileSync( filePath, `${ JSON.stringify( value, null, '\t' ) }\n` );
 }
 
-function run( command, args, { label, cwd } = {} ) {
+function phpString( value ) {
+	return `'${ String( value ).replaceAll( '\\', '\\\\' ).replaceAll( '\'', '\\\'' ) }'`;
+}
+
+function run( command, args, { label, cwd, env } = {} ) {
 	console.log( `\n> ${ label }` );
 
 	const result = spawnSync( command, args, {
 		cwd,
+		env,
 		shell: false,
 		stdio: 'inherit',
 	} );
@@ -232,6 +446,10 @@ function run( command, args, { label, cwd } = {} ) {
 function listFiles( directory ) {
 	if ( ! fs.existsSync( directory ) ) {
 		return [];
+	}
+
+	if ( fs.statSync( directory ).isFile() ) {
+		return [ directory ];
 	}
 
 	return fs.readdirSync( directory, { withFileTypes: true } ).flatMap(

@@ -22,20 +22,18 @@ use DI\Attribute\Inject;
 abstract class Module
 {
 	/**
-	 * Package slug for this module.
-	 *
-	 * @var string
-	 */
+	* Package slug for this module.
+	*
+	* @var string
+	*/
+	#[Inject( 'package' )]
 	protected string $package = '';
 
 	/**
-	 * Set the package slug.
-	 *
-	 * @param string $package Package slug.
-	 *
-	 * @return void
-	 */
-	#[Inject( [ 'package' => 'package' ] )]
+	* Set the package slug for this module.
+	*
+	* @param string $package Package slug to set.
+	*/
 	public function setPackage( string $package ): void
 	{
 		$this->package = sanitize_key( str_replace( '-', '_', trim( $package ) ) );

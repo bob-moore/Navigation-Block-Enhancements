@@ -3,7 +3,7 @@ Contributors: Bob Moore
 Tags: navigation, gutenberg, block editor, menus, colors
 Requires at least: 6.9
 Tested up to: 7.0
-Stable tag: 0.4.1
+Stable tag: 0.4.2
 Requires PHP: 8.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -91,6 +91,10 @@ WordPress 6.9+ and PHP 8.2+.
 
 == Changelog ==
 
+= 0.4.2 =
+
+* Fixed scoped dependency configuration so standalone ZIP installs can run alongside related plugins.
+
 = 0.4.1 =
 
 * Hardened package slug injection before it is used in WordPress hook names.
@@ -111,6 +115,10 @@ WordPress 6.9+ and PHP 8.2+.
 * Scoped release dependencies to reduce conflicts with other plugins.
 
 == Upgrade Notice ==
+
+= 0.4.2 =
+
+Fixes standalone ZIP install conflicts when installed with related plugins.
 
 = 0.4.1 =
 
