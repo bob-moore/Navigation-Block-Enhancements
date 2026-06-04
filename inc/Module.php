@@ -30,10 +30,10 @@ abstract class Module
 	protected string $package = '';
 
 	/**
-	* Set the package slug for this module.
-	*
-	* @param string $package Package slug to set.
-	*/
+	 * Set the package slug for this module.
+	 *
+	 * @param string $package Package slug to set.
+	 */
 	public function setPackage( string $package ): void
 	{
 		$this->package = sanitize_key( str_replace( '-', '_', trim( $package ) ) );

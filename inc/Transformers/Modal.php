@@ -30,6 +30,10 @@ class Modal extends Module
 	 */
 	public function removeFocusOut( string $block_content, array $block ): string
 	{
+		if ( ! apply_filters( "{$this->package}_enable_dev_mode", false ) ) {
+			return $block_content;
+		}
+
 		$overlay_menu = $block['attrs']['overlayMenu'] ?? 'mobile';
 
 		if ( 'never' === $overlay_menu ) {

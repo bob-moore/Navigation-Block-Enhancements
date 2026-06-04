@@ -53,10 +53,7 @@ class Controller extends Module
 	): void {
 		add_filter( 'render_block_core/navigation', [ $dropdown, 'renderBlock' ], 10, 2 );
 		add_filter( 'render_block_core/navigation', [ $colors, 'renderBlock' ], 10, 2 );
-
-		if ( apply_filters( "{$this->package}_enable_dev_mode", false ) ) {
-			add_filter( 'render_block_core/navigation', [ $modal, 'removeFocusOut' ], 10, 2 );
-		}
+		add_filter( 'render_block_core/navigation', [ $modal, 'removeFocusOut' ], 10, 2 );
 	}
 
 	/**
