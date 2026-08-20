@@ -140,6 +140,11 @@ The following CSS custom properties are available for theming:
 
 ## Changelog
 
+### 0.4.3
+
+- Fixed WordPress 7.1 navigation-overlay submenus so vertical click-open menus start closed and open only from their own toggle.
+- Preserved the vertical click-dropdown focusout workaround that prevents jumpy behavior between multiple dropdowns.
+
 ### 0.4.1
 
 - Hardened package slug injection before it is used in WordPress hook names.

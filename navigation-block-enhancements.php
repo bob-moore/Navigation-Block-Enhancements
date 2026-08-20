@@ -13,11 +13,11 @@
  * Plugin Name: Navigation Block Enhancements
  * Plugin URI:  https://github.com/bob-moore/Navigation-Block-Enhancements
  * Description: Enhance the core navigation block.
- * Version:     0.4.2
+ * Version:     0.4.3
  * Author:      Bob Moore
  * Author URI:  https://www.bobmoore.dev
  * Requires at least: 6.9
- * Tested up to: 7.0
+ * Tested up to: 7.1
  * Requires PHP: 8.2
  * License:     GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -59,7 +59,7 @@ function burn_baby_burn(): void
 		$plugin = new Main(
 			[
 				'package' => 'navigation_block_enhancements',
-				'version' => '0.4.2',
+				'version' => '0.4.3',
 				'path'    => plugin_dir_path( __FILE__ ),
 				'url'     => plugin_dir_url( __FILE__ ),
 			]

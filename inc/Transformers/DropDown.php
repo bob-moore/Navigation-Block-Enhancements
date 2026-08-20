@@ -35,30 +35,55 @@ class DropDown extends Module
 			default => false
 		};
 
-		if ( 'vertical' === $orientation ) {
+		if ( 'vertical' !== $orientation || ! $on_click ) {
+			return $block_content;
+		}
+
+		// WordPress 7.1 renders navigation blocks from overlay template parts as
+		// vertical menus. Shadow the parent overlay state so core's submenu state
+		// binding remains closed until the submenu toggle is clicked.
+		if ( ! empty( $block['attrs']['_isWithinOverlayTemplatePart'] ) ) {
 			$transformer = new \WP_HTML_Tag_Processor( $block_content );
-			$in_nav = false;
 
-			while ( $transformer->next_tag() ) {
-				/**
-				* We want to wait until we are in the nav menu to start
-				* mutating attributes. Otherwise we mess with the modal open/close
-				*/
-				if ( 'UL' === $transformer->get_tag() && ! $in_nav ) {
-					$in_nav = true;
-				}
-
-				if ( ! $in_nav ) {
-					continue;
-				}
-				/**
-				* Remove focusout for all vertical "dropdowns"
-				*/
-				$transformer->remove_attribute( 'data-wp-on--focusout' );
+			while (
+				$transformer->next_tag(
+					array(
+						'tag_name'   => 'LI',
+						'class_name' => 'has-child',
+					)
+				)
+			) {
+				$transformer->set_attribute(
+					'data-wp-context',
+					'{ "submenuOpenedBy": { "click": false, "hover": false, "focus": false }, "overlayOpenedBy": { "click": false, "hover": false, "focus": false }, "type": "submenu", "modal": null, "previousFocus": null }'
+				);
 			}
 
 			$block_content = $transformer->get_updated_html();
 		}
+
+		$transformer = new \WP_HTML_Tag_Processor( $block_content );
+		$in_nav = false;
+
+		while ( $transformer->next_tag() ) {
+			/**
+			* We want to wait until we are in the nav menu to start
+			* mutating attributes. Otherwise we mess with the modal open/close
+			*/
+			if ( 'UL' === $transformer->get_tag() && ! $in_nav ) {
+				$in_nav = true;
+			}
+
+			if ( ! $in_nav ) {
+				continue;
+			}
+			/**
+			* Remove focusout for all vertical "dropdowns"
+			*/
+			$transformer->remove_attribute( 'data-wp-on--focusout' );
+		}
+
+		$block_content = $transformer->get_updated_html();
 
 		return $block_content;
 	}

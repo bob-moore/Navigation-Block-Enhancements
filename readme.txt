@@ -2,8 +2,8 @@
 Contributors: Bob Moore
 Tags: navigation, gutenberg, block editor, menus, colors
 Requires at least: 6.9
-Tested up to: 7.0
-Stable tag: 0.4.2
+Tested up to: 7.1
+Stable tag: 0.4.3
 Requires PHP: 8.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -91,6 +91,11 @@ WordPress 6.9+ and PHP 8.2+.
 
 == Changelog ==
 
+= 0.4.3 =
+
+* Fixed WordPress 7.1 navigation-overlay submenus so vertical click-open menus start closed and open only from their own toggle.
+* Preserved the vertical click-dropdown focusout workaround that prevents jumpy behavior between multiple dropdowns.
+
 = 0.4.2 =
 
 * Fixed scoped dependency configuration so standalone ZIP installs can run alongside related plugins.
@@ -115,6 +120,10 @@ WordPress 6.9+ and PHP 8.2+.
 * Scoped release dependencies to reduce conflicts with other plugins.
 
 == Upgrade Notice ==
+
+= 0.4.3 =
+
+Fixes vertical click-open submenus inside WordPress 7.1 navigation overlays.
 
 = 0.4.2 =
 
